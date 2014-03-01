@@ -1,8 +1,9 @@
-package com.poorfellow.AGameOfThings;
+package com.poorfellow.agameofthings;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 
 
 /**
@@ -18,6 +19,7 @@ public class MainGameScreenFragment extends FragmentActivity {
         setContentView(R.layout.main_game_screen_layout);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        Log.d("STATUS", "About to create adapter");
 
         mGameScreenPagerAdapter = new MainGameScreenPagerAdapter(getSupportFragmentManager());
 

@@ -1,4 +1,4 @@
-package com.poorfellow.AGameOfThings;
+package com.poorfellow.agameofthings;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -24,6 +24,15 @@ public class MainGameScreenPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 Log.d("POSITION", "0");
                 Fragment submitThingFragment = new SubmitThingFragment();
+                return submitThingFragment;
+            case 1:
+                Log.d("POSITION", "1");
+                Fragment listThingsFragment = new ListThingsFragment();
+                return listThingsFragment;
+            case 2:
+                Log.d("POSITION", "1");
+                Fragment listNamesFragment = new ListNamesFragment();
+                return listNamesFragment;
         }
 
         return null;
@@ -31,6 +40,6 @@ public class MainGameScreenPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 1;
+        return 3;
     }
 }
