@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import com.poorfellow.agameofthings.*;
 
 public class OpenHomeActivity extends Activity {
     /**
@@ -21,10 +22,13 @@ public class OpenHomeActivity extends Activity {
         enterGameButton.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(OpenHomeActivity.this, MainGameScreenFragment.class);
+                Intent i = new Intent(OpenHomeActivity.this, EnterGameActivity.class);
                 Log.d("STATUS","Changing activity");
                 startActivity(i);
             }
         });
+
+        Button createGameButton = (Button) findViewById(R.id.creategameButon);
+    
     }
 }
