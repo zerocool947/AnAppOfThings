@@ -4,4 +4,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Game Name"
+            android:id="@+id/gameNameTextView" android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
+            android:layout_marginTop="38dp"/>
+    <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Game Open?"
+            android:id="@+id/gameOpenSwitch" android:layout_below="@+id/gameNameTextView"
+            android:layout_centerHorizontal="true" android:checked="true"/>
+    <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/joiningPlayersScollView" android:layout_below="@+id/gameOpenSwitch"
+            android:layout_centerHorizontal="true" android:layout_marginTop="39dp"/>
 </RelativeLayout>

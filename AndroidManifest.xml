@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-            android:minSdkVersion="11"
+            android:minSdkVersion="14"
             android:targetSdkVersion="17" /> 
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
@@ -35,7 +35,7 @@
                 android:value="OpenHomeActivity" />
         </activity>
         <activity android:name=".CreateGameActivity" android:label="Create Game"/>
-        <activity android:name=".GameLobbyActivity" android:label="Game Lobby"/>
+        <activity android:name=".HostGameLobbyActivity" android:label="Game Lobby"/>
     </application>
 
 </manifest>

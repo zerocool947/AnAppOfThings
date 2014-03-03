@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.util.Log;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,11 +16,12 @@ import java.util.Set;
 /**
  * Created by David on 3/2/14.
  */
-public class BluetoothHandler extends Thread {
+public class BluetoothHandler {
 
     private static BluetoothHandler bluetoothHandler;
 
     private final static int REQUEST_ENABLE_BT = 1;
+    public final static String STOP_DISCOVERING = "com.poorfellow.agameofthing,bluetooth.STOP_DISCOVERING";
 
     public static BluetoothHandler getInstance(final Context context) {
         if (bluetoothHandler == null) {
@@ -30,13 +32,11 @@ public class BluetoothHandler extends Thread {
 
     private final Context context;
     private final BluetoothAdapter bluetoothAdapter;
-    private Map<String, String> playerMap;
     private boolean discoveryMode = false;
 
     public BluetoothHandler (Context context) {
         this.context = context;
         this.bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        this.playerMap = new HashMap<String, String>();
     }
 
     public boolean checkIfBluetoothSupported() {
@@ -55,30 +55,35 @@ public class BluetoothHandler extends Thread {
     }
 
     public void openQueue() {
-        discoveryMode = true;
-        while (discoveryMode) {
-            if (bluetoothAdapter.startDiscovery()) {
-                final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-                    @Override
-                    public void onReceive(Context context, Intent intent) {
-                        String action = intent.getAction();
-                        if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                            playerMap.put(device.getAddress(), device.getName());
-                        }
-                    }
-                };
+        Log.d("STATUS", "attempting to open discovery.");
+        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
+        context.startActivity(discoverableIntent);
 
-                IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-                context.registerReceiver(broadcastReceiver, filter);
+    }
 
-            }
+    public boolean startDiscovery() {
+        if (!bluetoothAdapter.isDiscovering()) {
+            return bluetoothAdapter.startDiscovery();
         }
+
+        return true;
+    }
+
+    public void closeQueue() {
+        Log.d("STATUS", "attempting to close discovery.");
     }
 
     public void destroyHandler() {
-        if (bluetoothAdapter.isDiscovering()) {
-            bluetoothAdapter.cancelDiscovery();
+        closeQueue();
+    }
+
+    public boolean isDiscoverable() {
+        if (bluetoothAdapter.getScanMode() == BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+            return true;
+        }
+        else {
+            return false;
         }
     }
 
