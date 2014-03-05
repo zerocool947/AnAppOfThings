@@ -54,10 +54,14 @@ public class BluetoothHandler {
         }
     }
 
-    public void openQueue() {
+    /**
+     *
+     * @param duration Anything outside of 0 and 3600 sets to 120. 0 means indefinite. So far haven't found a way to close from that state 3/3/2014
+     */
+    public void openQueue(int duration) {
         Log.d("STATUS", "attempting to open discovery.");
         Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, duration);
         context.startActivity(discoverableIntent);
 
     }

@@ -1,7 +1,6 @@
 package com.poorfellow.agameofthings;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +8,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ScrollView;
-import android.widget.TextView;
 import com.poorfellow.agameofthings.bluetooth.BluetoothHandler;
 
 import java.util.HashMap;
@@ -36,7 +34,7 @@ public class HostGameLobbyActivity extends Activity {
         btHandler.enableBluetooth();
 
         Log.d("STATUS", "Enbled bluetooth, opening queue.");
-        btHandler.openQueue();
+        btHandler.openQueue(3600);
 
         try {
             Thread.sleep(5000);
@@ -45,12 +43,12 @@ public class HostGameLobbyActivity extends Activity {
         }
         Log.d("STATUS", "Discoverable status is Status is : " + btHandler.isDiscoverable());
 
-        /*scanChangedReceiver = new BroadcastReceiver() {
+        scanChangedReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
 
             }
-        };*/
+        };
 
 
         /*actionFoundBroadcastReceiver = new BroadcastReceiver() {
