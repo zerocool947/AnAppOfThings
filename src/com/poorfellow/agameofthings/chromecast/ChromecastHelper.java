@@ -25,7 +25,7 @@ public class ChromecastHelper {
     private static final String DIALOG_ERROR = "dialog_error";
     private static final int REQUEST_RESOLVE_ERROR = 1001;
 
-    private static final String CHROMECAST_API_ID = "2C18770F";
+    private static final String DEV_APP_ID = "2C18770F";
 
     private GoogleApiClient mApiClient;
     private final Context mContext;
@@ -34,11 +34,12 @@ public class ChromecastHelper {
     private Cast.Listener mCastClientListener;
     private CastDevice mConnectedDevice;
 
-    private static ChromecastHelper mChromecastHelper;
+    private static ChromecastHelper mChromecastHelper = null;
 
     public static ChromecastHelper getInstance(final Context context) {
         if (mChromecastHelper == null) {
-            return new ChromecastHelper(context);
+            mChromecastHelper = new ChromecastHelper(context);
+            return mChromecastHelper;
         }
         else {
             return mChromecastHelper;
@@ -68,7 +69,7 @@ public class ChromecastHelper {
 
         this.mMediaRouter = MediaRouter.getInstance(mContext.getApplicationContext());
         mMediaRouteSelector = new MediaRouteSelector.Builder()
-                .addControlCategory(CastMediaControlIntent.categoryForCast(CHROMECAST_API_ID))
+                .addControlCategory(CastMediaControlIntent.categoryForCast(DEV_APP_ID))
                 .build();
 
     }

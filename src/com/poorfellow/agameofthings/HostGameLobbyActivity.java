@@ -8,11 +8,12 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.MediaRouteActionProvider;
+import android.support.v7.app.MediaRouteButton;
 import android.support.v7.media.MediaRouteSelector;
 import android.support.v7.media.MediaRouter;
 import android.support.v7.media.MediaRouter.RouteInfo;
 import android.util.Log;
+import android.view.ActionProvider;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ScrollView;
@@ -20,9 +21,8 @@ import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-
 import com.poorfellow.agameofthings.chromecast.ChromecastHelper;
-
+import android.support.v7.app.MediaRouteActionProvider;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -75,9 +75,21 @@ public class HostGameLobbyActivity
         Log.d("STATUS", "Inside on create options menu");
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.media_router_action_bar, menu);
-        /*MenuItem mediaRouteMenuItem = menu.findItem(R.id.media_route_menu_item);
+        MenuItem mediaRouteMenuItem = menu.findItem(R.id.media_route_menu_item);
+        MediaRouteButton mediaRouteButton = (MediaRouteButton) mediaRouteMenuItem.getActionView();
+        if (mediaRouteButton == null) {
+            Log.d("STATUS", "Menu Button is null");
+        }
+
+        if (mediaRouteMenuItem == null) {
+            Log.d("STATUS", "Route Menu Item is null");
+        }
+
         MediaRouteActionProvider mediaActionProvider = (MediaRouteActionProvider) MenuItemCompat.getActionProvider(mediaRouteMenuItem);
-        mediaActionProvider.setRouteSelector(mediaRouteSelector);*/
+        if (mediaActionProvider == null) {
+            Log.d("STATUS", "action provider is null");
+        }
+        mediaActionProvider.setRouteSelector(mediaRouteSelector);
         return true;
     }
 
