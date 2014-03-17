@@ -1,6 +1,6 @@
 package com.poorfellow.agameofthings;
 
-import android.app.ActionBar;
+import android.support.v7.app.ActionBar;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +13,6 @@ import android.support.v7.media.MediaRouteSelector;
 import android.support.v7.media.MediaRouter;
 import android.support.v7.media.MediaRouter.RouteInfo;
 import android.util.Log;
-import android.view.ActionProvider;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ScrollView;
@@ -48,7 +47,7 @@ public class HostGameLobbyActivity
         playerMap = new HashMap<String, String>();
         chromecastHelper = ChromecastHelper.getInstance(this);
         mediaRouteSelector = chromecastHelper.getMediaRouteSelector();
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
         actionBar.show();
 
@@ -90,6 +89,9 @@ public class HostGameLobbyActivity
             Log.d("STATUS", "action provider is null");
         }
         mediaActionProvider.setRouteSelector(mediaRouteSelector);
+        Log.d("STATUS", "The media button is enabled? " + mediaActionProvider.getMediaRouteButton().isEnabled());
+        Log.d("STATUS", "The media button is in layout? " + mediaActionProvider.getMediaRouteButton().isInLayout());
+
         return true;
     }
 
