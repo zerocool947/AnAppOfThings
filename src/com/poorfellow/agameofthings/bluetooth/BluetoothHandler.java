@@ -21,7 +21,7 @@ public class BluetoothHandler {
     private static BluetoothHandler bluetoothHandler;
 
     private final static int REQUEST_ENABLE_BT = 1;
-    public final static String STOP_DISCOVERING = "com.poorfellow.agameofthing,bluetooth.STOP_DISCOVERING";
+    public final static String STOP_DISCOVERING = "com.poorfellow.agameofthings.bluetooth.STOP_DISCOVERING";
 
     public static BluetoothHandler getInstance(final Context context) {
         if (bluetoothHandler == null) {

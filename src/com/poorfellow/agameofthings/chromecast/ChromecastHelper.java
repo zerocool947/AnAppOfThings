@@ -100,6 +100,10 @@ public class ChromecastHelper {
         return mMediaRouteSelector;
     }
 
+    public MediaRouter getMediaRouter() {
+        return mMediaRouter;
+    }
+
     public void instantiateApiClient(CastDevice castDevice) {
         this.mApiClient = new GoogleApiClient.Builder(mContext)
                 .addApi(Cast.API, Cast.CastOptions.builder(castDevice, mCastClientListener).build())

@@ -1,5 +1,6 @@
 package com.poorfellow.agameofthings;
 
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -15,6 +16,7 @@ import android.support.v7.media.MediaRouter.RouteInfo;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ScrollView;
 import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.common.ConnectionResult;
@@ -39,6 +41,7 @@ public class HostGameLobbyActivity
     private MediaRouteSelector mediaRouteSelector;
     private ChromecastHelper chromecastHelper;
     private CastDevice selectedDevice;
+    private MediaRouterCallback mediaRouterCallback;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,18 +50,10 @@ public class HostGameLobbyActivity
         playerMap = new HashMap<String, String>();
         chromecastHelper = ChromecastHelper.getInstance(this);
         mediaRouteSelector = chromecastHelper.getMediaRouteSelector();
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
         actionBar.show();
-
-
-
-
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         scanChangedReceiver = new BroadcastReceiver() {
             @Override
@@ -66,6 +61,8 @@ public class HostGameLobbyActivity
 
             }
         };
+        mediaRouter = chromecastHelper.getMediaRouter();
+        mediaRouterCallback = new MediaRouterCallback();
 
     }
 
@@ -76,22 +73,14 @@ public class HostGameLobbyActivity
         getMenuInflater().inflate(R.menu.media_router_action_bar, menu);
         MenuItem mediaRouteMenuItem = menu.findItem(R.id.media_route_menu_item);
         MediaRouteButton mediaRouteButton = (MediaRouteButton) mediaRouteMenuItem.getActionView();
-        if (mediaRouteButton == null) {
-            Log.d("STATUS", "Menu Button is null");
-        }
-
-        if (mediaRouteMenuItem == null) {
-            Log.d("STATUS", "Route Menu Item is null");
-        }
 
         MediaRouteActionProvider mediaActionProvider = (MediaRouteActionProvider) MenuItemCompat.getActionProvider(mediaRouteMenuItem);
-        if (mediaActionProvider == null) {
-            Log.d("STATUS", "action provider is null");
-        }
+
         mediaActionProvider.setRouteSelector(mediaRouteSelector);
+        mediaRouter.addCallback(mediaRouteSelector, mediaRouterCallback,
+                MediaRouter.CALLBACK_FLAG_PERFORM_ACTIVE_SCAN);
         Log.d("STATUS", "The media button is enabled? " + mediaActionProvider.getMediaRouteButton().isEnabled());
         Log.d("STATUS", "The media button is in layout? " + mediaActionProvider.getMediaRouteButton().isInLayout());
-
         return true;
     }
 
