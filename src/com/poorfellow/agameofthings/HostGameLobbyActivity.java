@@ -1,6 +1,5 @@
 package com.poorfellow.agameofthings;
 
-import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -19,11 +18,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ScrollView;
 import com.google.android.gms.cast.CastDevice;
+import com.google.android.gms.cast.MediaInfo;
+import com.google.android.gms.cast.MediaMetadata;
+import com.google.android.gms.cast.MediaStatus;
+import com.google.android.gms.cast.RemoteMediaPlayer;
+import com.google.android.gms.cast.RemoteMediaPlayer.OnMetadataUpdatedListener;
+import com.google.android.gms.cast.RemoteMediaPlayer.OnStatusUpdatedListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.poorfellow.agameofthings.chromecast.ChromecastHelper;
 import android.support.v7.app.MediaRouteActionProvider;
+import com.google.android.gms.cast.RemoteMediaPlayer.OnStatusUpdatedListener;
+import com.google.android.gms.cast.RemoteMediaPlayer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,6 +49,7 @@ public class HostGameLobbyActivity
     private ChromecastHelper chromecastHelper;
     private CastDevice selectedDevice;
     private MediaRouterCallback mediaRouterCallback;
+    private RemoteMediaPlayer remoteMediaPlayer;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,15 +98,15 @@ public class HostGameLobbyActivity
     }*/
 
     public void onPause() {
+        if (isFinishing()) {
+            mediaRouter.removeCallback(mediaRouterCallback);
+        }
         super.onPause();
-
-
     }
 
     public void onResume() {
         super.onResume();
-
-
+        mediaRouter.addCallback(mediaRouteSelector, mediaRouterCallback, MediaRouter.CALLBACK_FLAG_PERFORM_ACTIVE_SCAN);
     }
 
     public void OnDestroy() {
@@ -126,7 +134,8 @@ public class HostGameLobbyActivity
         @Override
         public void onRouteSelected(MediaRouter router, RouteInfo info) {
             selectedDevice = CastDevice.getFromBundle(info.getExtras());
-            //maybe get the id, idk
+            chromecastHelper.setConnectedDevice(selectedDevice);
+            chromecastHelper.launchReciever();
         }
 
         @Override

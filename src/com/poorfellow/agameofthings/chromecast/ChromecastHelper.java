@@ -13,8 +13,19 @@ import com.google.android.gms.cast.Cast;
 import com.google.android.gms.cast.Cast.Listener;
 import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.CastMediaControlIntent;
+import com.google.android.gms.cast.MediaInfo;
+import com.google.android.gms.cast.MediaInfo.Builder;
+import com.google.android.gms.cast.MediaMetadata;
+import com.google.android.gms.cast.MediaStatus;
+import com.google.android.gms.cast.RemoteMediaPlayer;
+import com.google.android.gms.cast.RemoteMediaPlayer.MediaChannelResult;
+import com.google.android.gms.cast.RemoteMediaPlayer.OnMetadataUpdatedListener;
+import com.google.android.gms.cast.RemoteMediaPlayer.OnStatusUpdatedListener;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+
+import java.io.IOException;
 
 
 /**
@@ -25,7 +36,7 @@ public class ChromecastHelper {
     private static final String DIALOG_ERROR = "dialog_error";
     private static final int REQUEST_RESOLVE_ERROR = 1001;
 
-    private static final String DEV_APP_ID = "2C18770F";
+    public static final String DEV_APP_ID = "2C18770F";
 
     private GoogleApiClient mApiClient;
     private final Context mContext;
@@ -33,6 +44,8 @@ public class ChromecastHelper {
     private MediaRouteSelector mMediaRouteSelector;
     private Cast.Listener mCastClientListener;
     private CastDevice mConnectedDevice;
+    private ConnectionCallbacks mConnectionCallbacks;
+    private RemoteMediaPlayer mRemoteMediaPlayer;
 
     private static ChromecastHelper mChromecastHelper = null;
 
@@ -44,6 +57,14 @@ public class ChromecastHelper {
         else {
             return mChromecastHelper;
         }
+    }
+
+    public static ChromecastHelper getInstance() {
+        if (mChromecastHelper == null) {
+            throw new RuntimeException("Helper must be initialized with a context before it can be retrieved.");
+        }
+
+        return mChromecastHelper;
     }
 
     public ChromecastHelper (Context context) {
@@ -64,8 +85,7 @@ public class ChromecastHelper {
                 //teardown method
             }
         };
-
-
+        this.mConnectionCallbacks = new ConnectionCallbacks();
 
         this.mMediaRouter = MediaRouter.getInstance(mContext.getApplicationContext());
         mMediaRouteSelector = new MediaRouteSelector.Builder()
@@ -107,7 +127,7 @@ public class ChromecastHelper {
     public void instantiateApiClient(CastDevice castDevice) {
         this.mApiClient = new GoogleApiClient.Builder(mContext)
                 .addApi(Cast.API, Cast.CastOptions.builder(castDevice, mCastClientListener).build())
-                .addConnectionCallbacks((GoogleApiClient.ConnectionCallbacks) mContext)
+                .addConnectionCallbacks(mConnectionCallbacks)
                 .addOnConnectionFailedListener((GoogleApiClient.OnConnectionFailedListener) mContext)
                 .build();
         Log.d("STATUS", "Chromecast API Connection Built.");
@@ -118,7 +138,22 @@ public class ChromecastHelper {
     }
 
     public void setConnectedDevice(CastDevice connectedDevice) {
+
         this.mConnectedDevice = connectedDevice;
+    }
+
+
+    public GoogleApiClient getApiClient() {
+        return mApiClient;
+    }
+
+    public void launchReciever() {
+        if (mApiClient == null) {
+            instantiateApiClient();
+        }
+
+        mApiClient.connect();
+
     }
 
     public static class ErrorDialogFragment extends DialogFragment {

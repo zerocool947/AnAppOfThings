@@ -30,6 +30,7 @@
     <orderEntry type="module" module-name="appcompat" exported="" />
     <orderEntry type="library" name="android-support-v7-appcompat" level="project" />
     <orderEntry type="library" name="android-support-v7-mediarouter" level="project" />
+    <orderEntry type="library" name="android-support-v13" level="project" />
   </component>
 </module>
 
