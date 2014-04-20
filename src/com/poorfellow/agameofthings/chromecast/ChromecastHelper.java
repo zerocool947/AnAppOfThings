@@ -196,7 +196,6 @@ public class ChromecastHelper {
             @Override
             public void onStatusUpdated() {
                 MediaStatus mediaStatus = mRemoteMediaPlayer.getMediaStatus();
-                Log.d("STATUS", "My media status is " + mediaStatus.getMediaInfo().toString());
                 boolean isPlaying = mediaStatus.getPlayerState() == MediaStatus.PLAYER_STATE_PLAYING;
             }
         });
