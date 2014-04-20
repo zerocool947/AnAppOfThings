@@ -23,6 +23,7 @@ import com.google.android.gms.cast.RemoteMediaPlayer.OnMetadataUpdatedListener;
 import com.google.android.gms.cast.RemoteMediaPlayer.OnStatusUpdatedListener;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 
 import java.io.IOException;
@@ -151,10 +152,78 @@ public class ChromecastHelper {
         if (mApiClient == null) {
             instantiateApiClient();
         }
-
         mApiClient.connect();
 
     }
+
+    public void displayPhoto() {
+        Log.d("STATUS", "Attempting to display a photo");
+        MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_PHOTO);
+        mediaMetadata.putString(MediaMetadata.KEY_TITLE, "My Photo");
+        MediaInfo mediaInfo = new Builder("http://i.imgur.com/DTHVKCD.jpg")
+                .setContentType("image/jpeg")
+                .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
+                .setMetadata(mediaMetadata)
+                .build();
+        Log.d("STATUS", "Mediainfo built");
+        try {
+            Log.d("STATUS", "Attempting to load photo");
+            PendingResult<MediaChannelResult> loadedPlayer = mRemoteMediaPlayer.load(mApiClient, mediaInfo, true);
+            Log.d("STATUS", "Pending result on the load;");
+            loadedPlayer.setResultCallback(new ResultCallback<MediaChannelResult>() {
+                @Override
+                public void onResult(MediaChannelResult result) {
+                    if (result.getStatus().isSuccess()) {
+                        Log.d("STATUS", "Media loaded");
+                    } else {
+                        Log.d("STATUS", "Failed to load media. Status is " + result.getStatus().toString());
+                    }
+                }
+            });
+        } catch(IllegalStateException e) {
+            Log.e("ERROR", "Problem occurred with media during loading", e);
+        } catch(Exception e) {
+            Log.e("ERROR", "Problem opening media during loading", e);
+        }
+    }
+
+    public void openMediaChannel() {
+        Log.d("STATUS", "Creating Media Channel");
+        mRemoteMediaPlayer = new RemoteMediaPlayer();
+
+        mRemoteMediaPlayer.setOnStatusUpdatedListener(new OnStatusUpdatedListener() {
+
+            @Override
+            public void onStatusUpdated() {
+                MediaStatus mediaStatus = mRemoteMediaPlayer.getMediaStatus();
+                Log.d("STATUS", "My media status is " + mediaStatus.getMediaInfo().toString());
+                boolean isPlaying = mediaStatus.getPlayerState() == MediaStatus.PLAYER_STATE_PLAYING;
+            }
+        });
+
+        mRemoteMediaPlayer.setOnMetadataUpdatedListener(new OnMetadataUpdatedListener() {
+            @Override
+            public void onMetadataUpdated() {
+                MediaInfo mediaInfo = mRemoteMediaPlayer.getMediaInfo();
+                MediaMetadata metadata = mediaInfo.getMetadata();
+            }
+        });
+        try {
+            Cast.CastApi.setMessageReceivedCallbacks(mApiClient, mRemoteMediaPlayer.getNamespace(), mRemoteMediaPlayer);
+        } catch (IOException e) {
+            Log.e("ERROR", "Error creating media channel", e);
+        }
+        mRemoteMediaPlayer.requestStatus(mApiClient).setResultCallback(new ResultCallback<MediaChannelResult>() {
+            @Override
+            public void onResult(MediaChannelResult result) {
+                if (!result.getStatus().isSuccess()) {
+                    Log.e("ERROR", "Failed to request status");
+                }
+            }
+        });
+        Log.d("STATUS", "Media Channel opened");
+    }
+
 
     public static class ErrorDialogFragment extends DialogFragment {
         private final Context pContext;

@@ -48,67 +48,14 @@ public class ConnectionCallbacks implements GoogleApiClient.ConnectionCallbacks 
                         String sessionId = result.getSessionId();
                         String appStatus = result.getApplicationStatus();
                         boolean wasLaunches = result.getWasLaunched();
+                        mChromecastHelper.openMediaChannel();
+                        mChromecastHelper.displayPhoto();
                     } else {
                         //teardown method
                     }
                 }
             });
-            Log.d("STATUS", "Creating Media Channel");
-            mRemoteMediaPlayer = new RemoteMediaPlayer();
 
-            mRemoteMediaPlayer.setOnStatusUpdatedListener(new OnStatusUpdatedListener() {
-
-                @Override
-                public void onStatusUpdated() {
-                    MediaStatus mediaStatus = mRemoteMediaPlayer.getMediaStatus();
-                    boolean isPlaying = mediaStatus.getPlayerState() == MediaStatus.PLAYER_STATE_PLAYING;
-                }
-            });
-
-            mRemoteMediaPlayer.setOnMetadataUpdatedListener(new OnMetadataUpdatedListener() {
-                @Override
-                public void onMetadataUpdated() {
-                    MediaInfo mediaInfo = mRemoteMediaPlayer.getMediaInfo();
-                    MediaMetadata metadata = mediaInfo.getMetadata();
-                }
-            });
-            try {
-                Cast.CastApi.setMessageReceivedCallbacks(mApiClient, mRemoteMediaPlayer.getNamespace(), mRemoteMediaPlayer);
-            } catch (IOException e) {
-                Log.e("ERROR", "Error creating media channel", e);
-            }
-            mRemoteMediaPlayer.requestStatus(mApiClient).setResultCallback(new ResultCallback<MediaChannelResult>() {
-                @Override
-                public void onResult(MediaChannelResult result) {
-                    if (!result.getStatus().isSuccess()) {
-                        Log.e("ERROR", "Failed to request status");
-                    }
-                }
-            });
-            Log.d("STATUS", "Media Channel opened");
-
-            MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_PHOTO);
-            mediaMetadata.putString(MediaMetadata.KEY_TITLE, "My Photo");
-            MediaInfo mediaInfo = new Builder("/DCIM/Camera/20140419_160800.jpg")
-                    .setContentType("image/jpeg")
-                    .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-                    .setMetadata(mediaMetadata)
-                    .build();
-
-            try {
-                mRemoteMediaPlayer.load(mApiClient, mediaInfo, true).setResultCallback(new ResultCallback<MediaChannelResult>() {
-                    @Override
-                    public void onResult(MediaChannelResult result) {
-                        if (result.getStatus().isSuccess()) {
-                            Log.d("STATUS", "Media loaded");
-                        }
-                    }
-                });
-            } catch(IllegalStateException e) {
-                Log.e("ERROR", "Problem occurred with media during loading", e);
-            } catch(Exception e) {
-                Log.e("ERROR", "Problem opening media during loading", e);
-            }
         } catch (Exception e) {
             Log.e("ERROR", "Failed to launch application", e);
         }
